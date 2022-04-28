@@ -1,11 +1,12 @@
 package com.capitalone.dashboard.service;
 
-import com.capitalone.dashboard.misc.HygieiaException;
-import com.capitalone.dashboard.model.Template;
-import com.capitalone.dashboard.repository.TemplateRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.capitalone.dashboard.misc.HygieiaException;
+import com.capitalone.dashboard.model.Template;
+import com.capitalone.dashboard.repository.TemplateRepository;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
@@ -40,13 +41,13 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public void delete(ObjectId id) {
-        templateRepository.delete(id);
+        templateRepository.deleteById(id);
     }
 
 
     @Override
     public Template get(ObjectId id) {
-        Template template = templateRepository.findOne(id);
+        Template template = templateRepository.findById(id).get();
         return template;
     }
 

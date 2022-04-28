@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 
 import com.capitalone.dashboard.misc.HygieiaException;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,7 @@ import com.google.common.collect.Multimap;
  */
 @Service("dynamic-pipeline")
 public class DynamicPipelineServiceImpl implements PipelineService {
-	private static final Logger logger = Logger.getLogger(DynamicPipelineServiceImpl.class);
+	private static final Log LOGGER = LogFactory.getLog(DynamicPipelineServiceImpl.class);
 
     private static final int PROD_COMMIT_DATE_RANGE_DEFAULT = -90;
     
@@ -145,8 +146,8 @@ public class DynamicPipelineServiceImpl implements PipelineService {
         /**
          * get the collector item and dashboard
          */
-        CollectorItem dashboardCollectorItem = collectorItemRepository.findOne(pipeline.getCollectorItemId());
-        Dashboard dashboard = dashboardRepository.findOne(new ObjectId((String)dashboardCollectorItem.getOptions().get("dashboardId")));
+        CollectorItem dashboardCollectorItem = collectorItemRepository.findById(pipeline.getCollectorItemId()).get();
+        Dashboard dashboard = dashboardRepository.findById(new ObjectId((String)dashboardCollectorItem.getOptions().get("dashboardId"))).get();
         
         PipelineResponse pipelineResponse = new PipelineResponse();
         pipelineResponse.setCollectorItemId(dashboardCollectorItem.getId());
@@ -202,8 +203,8 @@ public class DynamicPipelineServiceImpl implements PipelineService {
      * @return				the <b>pipeline</b> passed in
      */
     protected Pipeline buildPipeline(Pipeline pipeline, Long lowerBound, Long upperBound) {
-        CollectorItem dashboardCollectorItem = collectorItemRepository.findOne(pipeline.getCollectorItemId());
-        Dashboard dashboard = dashboardRepository.findOne(new ObjectId((String)dashboardCollectorItem.getOptions().get("dashboardId")));
+        CollectorItem dashboardCollectorItem = collectorItemRepository.findById(pipeline.getCollectorItemId()).get();
+        Dashboard dashboard = dashboardRepository.findById(new ObjectId((String)dashboardCollectorItem.getOptions().get("dashboardId"))).get();
 
         // First gather information about our dashboard
         
@@ -247,14 +248,14 @@ public class DynamicPipelineServiceImpl implements PipelineService {
 		// TODO when processing commits should we only add the commits that are within the time boundaries?
     	Set<String> seenRevisionNumbers = new HashSet<>();
     	
-    	if (logger.isDebugEnabled()) {
+    	if (LOGGER.isDebugEnabled()) {
     		StringBuilder sb = new StringBuilder();
     		sb.append("\n===== Commit List =====\n");
     		for (Commit commit : commits) {
     			sb.append("    - " + commit.getId() + " (" + commit.getScmRevisionNumber() + ") - " + commit.getScmCommitLog() + "\n");
     		}
     		
-    		logger.debug(sb.toString());
+    		LOGGER.debug(sb.toString());
     	}
     	
     	for (Commit commit : commits) {
@@ -287,7 +288,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     	Collections.sort(sortedBuilds, BUILD_NUMBER_COMPATATOR);
     	Multimap<ObjectId, Commit> buildCommits = buildBuildToCommitsMap(sortedBuilds, commits);
     	
-    	if (logger.isDebugEnabled()) {
+    	if (LOGGER.isDebugEnabled()) {
     		StringBuilder sb = new StringBuilder();
     		sb.append("\n===== Build Commit Mapping =====\n");
     		for (Build build : sortedBuilds) {
@@ -313,7 +314,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     			sb.append("\n");
     		}
     		
-    		logger.debug(sb.toString());
+    		LOGGER.debug(sb.toString());
     	}
     	
     	Set<String> seenRevisionNumbers = new HashSet<>();
@@ -368,8 +369,8 @@ public class DynamicPipelineServiceImpl implements PipelineService {
 				}
 				
 				if (commit.getScmCommitTimestamp() < latestSuccessfulBuild.getStartTime()) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("processBuilds adding orphaned build commit " + commit.getScmRevisionNumber());
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("processBuilds adding orphaned build commit " + commit.getScmRevisionNumber());
 					}
 					
 					pipeline.addCommit(PipelineStage.BUILD.getName(), new PipelineCommit(commit, commit.getScmCommitTimestamp()));
@@ -398,7 +399,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     protected void processDeployments(Pipeline pipeline, List<Environment> environments,
 			Map<ArtifactIdentifier, Collection<BinaryArtifact>> artifacts, List<Commit> commits) {
     	
-    	if (logger.isDebugEnabled()) {
+    	if (LOGGER.isDebugEnabled()) {
     		StringBuilder sb = new StringBuilder();
     		
     		sb.append("\n===== Environment Artifact Mapping =====\n");
@@ -441,7 +442,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
         		}
     		}
     		
-    		logger.debug(sb.toString());
+    		LOGGER.debug(sb.toString());
     	}
     	
     	// Build commit graph - child : parents
@@ -477,7 +478,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     				Commit commit = commitsByRevisionNumber.get(rev);
     				
     				if (commit == null) {
-    					logger.warn("Error encountered building pipeline: commit information missing for revision " + rev);
+    					LOGGER.warn("Error encountered building pipeline: commit information missing for revision " + rev);
     				} else {
     					stage.addCommit(new PipelineCommit(commit, deployableUnit.getLastUpdated()));
     				}
@@ -539,7 +540,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     			}
     		}
     		
-    		if (logger.isDebugEnabled() && !added) {
+    		if (LOGGER.isDebugEnabled() && !added) {
     			StringBuilder sb = new StringBuilder();
     			sb.append("Ignoring build " + build.getBuildUrl() + " since it does not use the component's repository\n");
     			sb.append("Component repo: (url: " + url + " branch: " + branch + ")\n");
@@ -560,7 +561,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     				sb.append("(None)\n");
     			}
     			
-    			logger.debug(sb.toString());
+    			LOGGER.debug(sb.toString());
     		}
     	}
     	
@@ -596,7 +597,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     			}
     		}
     		
-    		if (logger.isDebugEnabled() && !added) {
+    		if (LOGGER.isDebugEnabled() && !added) {
     			StringBuilder sb = new StringBuilder();
     			sb.append("Ignoring artifact identifier " + id.getGroup() + ":" + id.getName() + ":" + id.getVersion()
     			+ " since it does not correspond to any artifacts that use the component's repository\n");
@@ -614,7 +615,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
     				sb.append("(None)\n");
     			}
     			
-    			logger.debug(sb.toString());
+    			LOGGER.debug(sb.toString());
     		}
     		
     		if (!artifacts.isEmpty()) {
@@ -636,7 +637,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
 	protected RepoBranch getComponentRepoBranch(Component component) {
         CollectorItem item = component.getFirstCollectorItemForType(CollectorType.SCM);
         if (item == null) {
-        	logger.warn("Error encountered building pipeline: could not find scm collector item for dashboard.");
+        	LOGGER.warn("Error encountered building pipeline: could not find scm collector item for dashboard.");
         	return new RepoBranch("", "", RepoType.Unknown);
         }
         
@@ -773,7 +774,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
 			boolean alreadyExists = rt.put(revisionNumber, commit) != null;
 			
 			if (alreadyExists) {
-				logger.warn("Error encountered building pipeline: multiple commits exist for revision number " + revisionNumber);
+				LOGGER.warn("Error encountered building pipeline: multiple commits exist for revision number " + revisionNumber);
 			}
 		}
 		
@@ -810,7 +811,7 @@ public class DynamicPipelineServiceImpl implements PipelineService {
 			}
 			
 			if (alreadyExists) {
-				logger.warn("Error encountered building pipeline: multiple commits exist for revision number " + revisionNumber);
+				LOGGER.warn("Error encountered building pipeline: multiple commits exist for revision number " + revisionNumber);
 			}
 		}
 		

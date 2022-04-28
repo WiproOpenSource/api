@@ -100,7 +100,7 @@ import com.google.common.collect.Lists;
      	Dashboard dashboard = makeDashboard("t1", "title", "app", "comp","someUser", DashboardType.Team, "ASVTEST", "BAPTEST");
      	String stringObjectId = "54b982620364c80a6136c9f2";
      	ObjectId objectId = new ObjectId(stringObjectId);
-     	when(dashboardTestRepository.findOne(objectId)).thenReturn(dashboard);
+     	when(dashboardTestRepository.findById(objectId).get()).thenReturn(dashboard);
      	
      	doNothing().when(dashboardTestService).delete(isA(ObjectId.class));
      	mockMvc.perform(delete("/dashboard/"+ stringObjectId)

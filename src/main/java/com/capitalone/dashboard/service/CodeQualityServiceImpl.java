@@ -109,7 +109,7 @@ public class CodeQualityServiceImpl implements CodeQualityService {
             result = codeQualityRepository.findAll(builder.getValue(), quality.timestamp.desc());
         } else {
             PageRequest pageRequest =
-                    new PageRequest(0, request.getMax(), Sort.Direction.DESC, "timestamp");
+                    PageRequest.of(0, request.getMax().intValue(), Sort.by(Sort.Direction.DESC,"timestamp"));
             result = codeQualityRepository.findAll(builder.getValue(), pageRequest).getContent();
         }
         String instanceUrl = (String)item.getOptions().get("instanceUrl");
@@ -118,14 +118,14 @@ public class CodeQualityServiceImpl implements CodeQualityService {
         if ( instanceUrl != null ) {
             reportUrl = getReportURL(instanceUrl,"dashboard/index/",projectId);
         }
-        Collector collector = collectorRepository.findOne(item.getCollectorId());
+        Collector collector = collectorRepository.findById(item.getCollectorId()).get();
         long lastExecuted = (collector == null) ? 0 : collector.getLastExecuted();
         return new DataResponse<>(result, lastExecuted,reportUrl);
     }
 
 
     protected CollectorItem getCollectorItem(CodeQualityRequest request) {
-        Component component = componentRepository.findOne(request.getComponentId());
+        Component component = componentRepository.findById(request.getComponentId()).get();
         if (component == null) {
             return null;
         }

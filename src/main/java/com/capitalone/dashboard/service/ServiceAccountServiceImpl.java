@@ -3,7 +3,9 @@ package com.capitalone.dashboard.service;
 import com.capitalone.dashboard.model.ServiceAccount;
 import com.capitalone.dashboard.repository.ServiceAccountRepository;
 import com.google.common.collect.Sets;
-import org.apache.log4j.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,7 @@ import java.util.Collection;
 @Component
 public class ServiceAccountServiceImpl implements ServiceAccountService {
 
-    private static final Logger LOGGER = Logger.getLogger(ServiceAccountServiceImpl.class);
+    private static final Log LOGGER = LogFactory.getLog(ServiceAccountServiceImpl.class);
 
 
     private ServiceAccountRepository serviceAccountRepository;
@@ -40,7 +42,7 @@ public class ServiceAccountServiceImpl implements ServiceAccountService {
 
     @Override
     public String updateAccount(String serviceAccount, String fileNames, ObjectId id){
-        ServiceAccount sa = serviceAccountRepository.findOne(id);
+        ServiceAccount sa = serviceAccountRepository.findById(id).get();
         sa.setServiceAccountName(serviceAccount);
         sa.setFileNames(fileNames);
         serviceAccountRepository.save(sa);
@@ -49,7 +51,7 @@ public class ServiceAccountServiceImpl implements ServiceAccountService {
 
     @Override
     public void deleteAccount(ObjectId id ){
-        serviceAccountRepository.delete(id);
+        serviceAccountRepository.deleteById(id);
     }
 
 

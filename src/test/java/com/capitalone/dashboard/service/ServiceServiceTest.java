@@ -59,7 +59,7 @@ public class ServiceServiceTest {
     public void get() {
         ObjectId id = ObjectId.get();
         serviceService.get(id);
-        verify(serviceRepository).findOne(id);
+        verify(serviceRepository).findById(id);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ServiceServiceTest {
         List<Owner> owners = new ArrayList<>();
         owners.add(new Owner("amit", AuthType.STANDARD));
         final Dashboard dashboard = new Dashboard("template", "title", new Application("app"), owners, DashboardType.Team, "ASVTEST","BAPTEST",activeWidgets, false, ScoreDisplayType.HEADER);
-        when(dashboardRepository.findOne(id)).thenReturn(dashboard);
+        when(dashboardRepository.findById(id).get()).thenReturn(dashboard);
 
         Service service=serviceService.create(id, name,url);
 
@@ -123,7 +123,7 @@ public class ServiceServiceTest {
         ObjectId serviceId = ObjectId.get();
         Service service = new Service();
         service.setDashboardId(dashId);
-        when(serviceRepository.findOne(serviceId)).thenReturn(service);
+        when(serviceRepository.findById(serviceId).get()).thenReturn(service);
 
         serviceService.delete(dashId, serviceId);
 
@@ -136,7 +136,7 @@ public class ServiceServiceTest {
         ObjectId serviceId = ObjectId.get();
         Service service = new Service();
         service.setDashboardId(ObjectId.get());
-        when(serviceRepository.findOne(serviceId)).thenReturn(service);
+        when(serviceRepository.findById(serviceId).get()).thenReturn(service);
 
         serviceService.addDependentService(dashId, serviceId);
 
@@ -155,7 +155,7 @@ public class ServiceServiceTest {
         ObjectId serviceId = ObjectId.get();
         Service service = new Service();
         service.setDashboardId(dashId);
-        when(serviceRepository.findOne(serviceId)).thenReturn(service);
+        when(serviceRepository.findById(serviceId).get()).thenReturn(service);
 
         serviceService.deleteDependentService(dashId, serviceId);
 

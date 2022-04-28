@@ -1,6 +1,7 @@
 package com.capitalone.dashboard.rest;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 public class PingController {
-	private static final Logger LOGGER = Logger.getLogger(PingController.class);
+	private static final Log LOGGER = LogFactory.getLog(PingController.class);
 
     @Value("${version.number}")
     private String versionNumber;

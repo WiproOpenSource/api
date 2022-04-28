@@ -30,10 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
-import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -343,7 +343,7 @@ public class SonarQubeHookServiceImpl implements SonarQubeHookService {
         String math = updatedProjects.size() + "/" + projects.size();
         String message = math + " sonar collector items and " + compIndex + " dashboard components can be updated";
         if (isSync) {
-            sonarProjectRepository.save(updatedProjects);
+            sonarProjectRepository.saveAll(updatedProjects);
             message = math + " sonar collector items and " + compIndex + " dashboard components updated";
         }
         LOG.info(message);

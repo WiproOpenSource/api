@@ -27,7 +27,7 @@ public class ApiTestConfig {
         ApiSettings settings = new ApiSettings();
 
         return settings;
-    }
+    } 
 
     @Bean
     public CustomRepositoryQuery customRepositoryQuery() { return Mockito.mock(CustomRepositoryQueryImpl.class); }

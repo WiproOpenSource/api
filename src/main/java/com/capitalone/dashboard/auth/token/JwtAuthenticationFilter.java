@@ -3,7 +3,8 @@ package com.capitalone.dashboard.auth.token;
 import com.capitalone.dashboard.util.CommonConstants;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Order(2)
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(JwtAuthenticationFilter.class);
+	private static final Log LOGGER = LogFactory.getLog(JwtAuthenticationFilter.class);
 	private TokenAuthenticationService tokenAuthenticationService;
     private static final String PING = "ping";
 	

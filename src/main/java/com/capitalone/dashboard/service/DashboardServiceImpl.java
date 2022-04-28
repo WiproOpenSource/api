@@ -113,7 +113,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Iterable<Dashboard> all() {
-        Iterable<Dashboard> dashboards = dashboardRepository.findAll(new Sort(Sort.Direction.ASC, "title"));
+        Iterable<Dashboard> dashboards = dashboardRepository.findAll(Sort.by(Sort.Direction.ASC, "title"));
         for(Dashboard dashboard: dashboards){
             String appName = dashboard.getConfigurationItemBusServName();
             String compName = dashboard.getConfigurationItemBusAppName();
@@ -138,7 +138,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Dashboard get(ObjectId id) {
-        Dashboard dashboard = dashboardRepository.findOne(id);
+        Dashboard dashboard = dashboardRepository.findById(id).get();
         String appName = dashboard.getConfigurationItemBusServName();
         String compName = dashboard.getConfigurationItemBusAppName();
 
@@ -184,7 +184,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         if(!isUpdate) {
             dashboard.setCreatedAt(System.currentTimeMillis());
-            components = componentRepository.save(dashboard.getApplication().getComponents());
+            components = componentRepository.saveAll(dashboard.getApplication().getComponents());
         }
         dashboard.setUpdatedAt(System.currentTimeMillis());
 
@@ -201,7 +201,7 @@ public class DashboardServiceImpl implements DashboardService {
         }  catch (Exception e) {
             //Exclude deleting of components if this is an update request
             if(!isUpdate) {
-                componentRepository.delete(components);
+                componentRepository.deleteAll(components);
             }
 
             if(e instanceof HygieiaException){
@@ -223,7 +223,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public void delete(ObjectId id) {
-        Dashboard dashboard = dashboardRepository.findOne(id);
+        Dashboard dashboard = dashboardRepository.findById(id).get();
 
         if (!isSafeDelete(dashboard)) {
             throw new UnsafeDeleteException("Cannot delete team dashboard " + dashboard.getTitle() + " as it is referenced by program dashboards.");
@@ -231,7 +231,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 
         // Remove this Dashboard's services and service dependencies
-        serviceRepository.delete(serviceRepository.findByDashboardId(id));
+        serviceRepository.deleteAll(serviceRepository.findByDashboardId(id));
         for (com.capitalone.dashboard.model.Service service : serviceRepository.findByDependedBy(id)) { //NOPMD - using fully qualified or we pickup an incorrect spring class
             service.getDependedBy().remove(id);
             serviceRepository.save(service);
@@ -241,7 +241,7 @@ public class DashboardServiceImpl implements DashboardService {
          * Delete Dashboard. Then delete component. Then disable collector items if needed
          */
         dashboardRepository.delete(dashboard);
-        componentRepository.delete(dashboard.getApplication().getComponents());
+        componentRepository.deleteAll(dashboard.getApplication().getComponents());
         handleCollectorItems(dashboard.getApplication().getComponents());
         if (dashboard.isScoreEnabled()) {
             this.scoreDashboardService.disableScoreForDashboard(dashboard);
@@ -302,7 +302,7 @@ public class DashboardServiceImpl implements DashboardService {
             // Not all widgets gather data from collectors
             return null;
         }
-        com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId); //NOPMD - using fully qualified name for clarity
+        com.capitalone.dashboard.model.Component component = componentRepository.findById(componentId).get(); //NOPMD - using fully qualified name for clarity
         associateCollectorItemsToComponent(collectorItemIds, true, component, cleanupQuality);
         return component;
     }
@@ -329,14 +329,14 @@ public class DashboardServiceImpl implements DashboardService {
         ObjectId currentCollectorId = null;
         Collector collector = null;
         for (ObjectId collectorItemId : collectorItemIds) {
-            CollectorItem collectorItem = collectorItemRepository.findOne(collectorItemId);
+            CollectorItem collectorItem = collectorItemRepository.findById(collectorItemId).get();
             incomingCollectorItems.put(collectorItemId, collectorItem);
             if(collectorItem == null) {
                 LOG.warn(METHOD_NAME + " Bad CollectorItemId passed in the request : " + collectorItemId);
                 continue;
             }
             if(collector == null || currentCollectorId != collectorItem.getCollectorId()) {
-                collector = collectorRepository.findOne(collectorItem.getCollectorId());
+                collector = collectorRepository.findById(collectorItem.getCollectorId()).get();
                 currentCollectorId = collector.getId();
             }
             if (!incomingTypes.contains(collector.getCollectorType())) {
@@ -389,7 +389,7 @@ public class DashboardServiceImpl implements DashboardService {
                 collectorItem.setLastUpdated(System.currentTimeMillis());
             }
             if(collector == null || currentCollectorId != collectorItem.getCollectorId()) {
-                collector = collectorRepository.findOne(collectorItem.getCollectorId());
+                collector = collectorRepository.findById(collectorItem.getCollectorId()).get();
                 currentCollectorId = collector.getId();
             }
             component.addCollectorItem(collector.getCollectorType(), collectorItem);
@@ -398,7 +398,7 @@ public class DashboardServiceImpl implements DashboardService {
             collectorItem.setCollector(collector);
         }
 
-        collectorItemRepository.save(new HashSet<>(toSaveCollectorItems.values()));
+        collectorItemRepository.saveAll(new HashSet<>(toSaveCollectorItems.values()));
         if(save){
             componentRepository.save(component);
         }
@@ -472,7 +472,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
 
-        return collectorRepository.findAll(collectorIds);
+        return collectorRepository.findAllById(collectorIds);
     }
 
     private Collector getCollector(final ObjectId collectorId, Iterable<Collector> collectors) {
@@ -519,7 +519,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
 
-        Dashboard dashboard = dashboardRepository.findOne(dashboardId);
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).get();
         dashboard.setOwners(Lists.newArrayList(owners));
         Dashboard result = dashboardRepository.save(dashboard);
 
@@ -544,7 +544,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Component getComponent(ObjectId componentId){
 
-        Component component = componentRepository.findOne(componentId);
+        Component component = componentRepository.findById(componentId).get();
         return component;
     }
     @Override
@@ -653,7 +653,7 @@ public class DashboardServiceImpl implements DashboardService {
         dashboard.setActiveWidgets(request.getActiveWidgets());
         dashboard = update(dashboard);
         if(componentId!=null){
-            com.capitalone.dashboard.model.Component component = componentRepository.findOne(componentId);
+            com.capitalone.dashboard.model.Component component = componentRepository.findById(componentId).get();
             for (CollectorType cType :collectorTypesToDelete) {
                 component.getCollectorItems().remove(cType);
             }

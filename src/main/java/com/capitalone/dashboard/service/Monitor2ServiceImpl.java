@@ -1,16 +1,16 @@
 package com.capitalone.dashboard.service;
 
-import com.capitalone.dashboard.model.Monitor2;
-import com.capitalone.dashboard.model.Dashboard;
-import com.capitalone.dashboard.repository.Monitor2Repository;
-import com.capitalone.dashboard.repository.DashboardRepository;
-import com.capitalone.dashboard.request.Monitor2DataCreateRequest;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.capitalone.dashboard.model.Dashboard;
+import com.capitalone.dashboard.model.Monitor2;
+import com.capitalone.dashboard.repository.DashboardRepository;
+import com.capitalone.dashboard.repository.Monitor2Repository;
+import com.capitalone.dashboard.request.Monitor2DataCreateRequest;
 
 // Hits the repositories for saving the data to mongo and retrieving it.
 @Service
@@ -36,7 +36,7 @@ public class Monitor2ServiceImpl implements Monitor2Service {
 
     @Override
     public Monitor2 get(ObjectId monitor2Id) {
-        return monitor2Repository.findOne(monitor2Id);
+        return monitor2Repository.findById(monitor2Id).get();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Monitor2ServiceImpl implements Monitor2Service {
         monitor2.setDashboardId(dashboardId);
         monitor2.setLastUpdated(System.currentTimeMillis());
 
-        Dashboard dashboard = dashboardRepository.findOne(dashboardId);
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).get();
         monitor2.setApplicationName(dashboard.getApplication().getName());
 
         return monitor2Repository.save(monitor2);

@@ -27,7 +27,10 @@ import com.google.common.collect.Sets;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.bson.types.ObjectId;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class BuildServiceImpl implements BuildService {
     @Autowired
     private ApiSettings settings;
 
-    private static final Logger LOGGER = Logger.getLogger(BuildService.class);
+    private static final Log LOGGER = LogFactory.getLog(BuildService.class);
 
     @Autowired
     public BuildServiceImpl(BuildRepository buildRepository,
@@ -84,7 +87,7 @@ public class BuildServiceImpl implements BuildService {
     @Override
     public DataResponse<Iterable<Build>> search(BuildSearchRequest request) {
         CollectorItem item = null;
-        Component component = componentRepository.findOne(request.getComponentId());
+        Component component = componentRepository.findById(request.getComponentId()).get();
         if ( (component == null)
                 || ((item = component.getLastUpdatedCollectorItemForType(CollectorType.Build)) == null) ) {
             Iterable<Build> results = new ArrayList<>();
@@ -115,13 +118,13 @@ public class BuildServiceImpl implements BuildService {
             builder.and(build.buildStatus.in(request.getBuildStatuses()));
         }
 
-        Collector collector = collectorRepository.findOne(item.getCollectorId());
+        Collector collector = collectorRepository.findById(item.getCollectorId()).get();
 
         Iterable<Build> result;
         if (request.getMax() == null) {
             result = buildRepository.findAll(builder.getValue());
         } else {
-            PageRequest pageRequest = new PageRequest(0, request.getMax(), Sort.Direction.DESC, "timestamp");
+            PageRequest pageRequest = PageRequest.of(0, request.getMax(), Sort.Direction.DESC, "timestamp");
             result = buildRepository.findAll(builder.getValue(), pageRequest).getContent();
         }
 
@@ -179,7 +182,7 @@ public class BuildServiceImpl implements BuildService {
         }
         response.setClientReference(clientReference);
         // Will be refactored soon
-        CollectorItem buildCollectorItem = collectorItemRepository.findOne(build.getCollectorItemId());
+        CollectorItem buildCollectorItem = collectorItemRepository.findById(build.getCollectorItemId()).get();
         if (buildCollectorItem != null) {
             LOGGER.info("correlation_id=" + clientReference
                     + ", build_url=" + build.getBuildUrl()
@@ -241,7 +244,7 @@ public class BuildServiceImpl implements BuildService {
     private void populateDashboardId(BuildDataCreateResponse response) {
         if (response == null) return;
 
-        CollectorItem collectorItem = collectorItemRepository.findOne(response.getCollectorItemId());
+        CollectorItem collectorItem = collectorItemRepository.findById(response.getCollectorItemId()).get();
         if (collectorItem == null) return;
 
         List<Dashboard> dashboards = dashboardService.getDashboardsByCollectorItems

@@ -21,7 +21,7 @@ public class MethodLevelSecurityHandler {
 	}
 	
 	public boolean isOwnerOfDashboard(ObjectId dashboardId) {
-		Dashboard dashboard = dashboardRepository.findOne(dashboardId);
+		Dashboard dashboard = dashboardRepository.findById(dashboardId).get();
 		if (dashboard == null) {
 			return false;
 		}
