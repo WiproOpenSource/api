@@ -143,8 +143,8 @@
             <groupId>com.capitalone.dashboard</groupId>
             <artifactId>core</artifactId>
             <version>${com.capitalone.dashboard.core.version}</version>
-            <scope>system</scope>
-            <systemPath>/Users/erictice/git/hygieia-core2/target/core-4.0.0-embed.jar</systemPath>
+          <!--   <scope>system</scope>
+            <systemPath>/Users/erictice/git/hygieia-core2/target/core-4.0.0-embed.jar</systemPath>--> 
         </dependency>
 
         <!-- Spring Libraries -->
