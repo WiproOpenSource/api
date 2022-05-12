@@ -1,5 +1,22 @@
 package com.capitalone.dashboard.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.bson.types.ObjectId;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.Collector;
 import com.capitalone.dashboard.model.GenericCollectorItem;
@@ -12,26 +29,10 @@ import com.capitalone.dashboard.request.GenericCollectorItemCreateRequest;
 import com.capitalone.dashboard.settings.ApiSettings;
 import com.capitalone.dashboard.testutil.FongoConfig;
 import com.capitalone.dashboard.testutil.GsonUtil;
-import com.github.fakemongo.junit.FongoRule;
+//import com.github.fakemongo.junit.FongoRule;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.bson.types.ObjectId;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -39,8 +40,8 @@ import static org.junit.Assert.*;
 @DirtiesContext
 public class GenericCollectorItemServiceImplTest {
 
-    @Rule
-    public FongoRule fongoRule = new FongoRule();
+    //@Rule
+    //public FongoRule fongoRule = new FongoRule();
 
     @Autowired
     private GenericCollectorItemRepository genericCollectorItemRepository;

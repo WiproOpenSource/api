@@ -16,7 +16,7 @@ import com.capitalone.dashboard.repository.ComponentRepository;
 import com.capitalone.dashboard.request.DashboardRemoteRequest;
 import com.capitalone.dashboard.testutil.GsonUtil;
 import com.capitalone.dashboard.util.TestUtil;
-import com.github.fakemongo.junit.FongoRule;
+//import com.github.fakemongo.junit.FongoRule;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -65,8 +65,8 @@ public class DashboardRemoteServiceTest {
     @Autowired
     private DashboardRemoteService dashboardRemoteService;
 
-    @Rule
-    public FongoRule fongoRule = new FongoRule();
+    //@Rule
+   // public FongoRule fongoRule = new FongoRule();
 
     @Before
     public void loadStuff() throws IOException {
