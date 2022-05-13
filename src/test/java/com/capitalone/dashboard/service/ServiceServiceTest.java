@@ -1,8 +1,8 @@
 package com.capitalone.dashboard.service;
 
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +12,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.capitalone.dashboard.model.*;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +21,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.capitalone.dashboard.model.Application;
+import com.capitalone.dashboard.model.AuthType;
+import com.capitalone.dashboard.model.Dashboard;
+import com.capitalone.dashboard.model.DashboardType;
+import com.capitalone.dashboard.model.Owner;
+import com.capitalone.dashboard.model.ScoreDisplayType;
+import com.capitalone.dashboard.model.Service;
+import com.capitalone.dashboard.model.ServiceStatus;
 import com.capitalone.dashboard.repository.DashboardRepository;
 import com.capitalone.dashboard.repository.ServiceRepository;
 import com.capitalone.dashboard.util.URLConnectionFactory;
@@ -77,16 +84,17 @@ public class ServiceServiceTest {
         Service service=serviceService.create(id, name,url);
 
         verify(serviceRepository).save(argThat(new ArgumentMatcher<Service>() {
-            @Override
-            public boolean matches(Object o) {
 
-                Service service = (Service) o;
+			@Override
+			public boolean matches(Service argument) {
+
+                Service service = (Service) argument;
                //return true;
                 return service.getName().equals(name) &&
                         service.getDashboardId().equals(id) &&
                         service.getStatus().equals(ServiceStatus.Warning) &&
                         service.getApplicationName().equals(dashboard.getApplication().getName());
-            }
+			}
         }));
     }
 
@@ -111,8 +119,8 @@ public class ServiceServiceTest {
         verify(serviceRepository).save(argThat(new ArgumentMatcher<Service>() {
 
             @Override
-            public boolean matches(Object o) {
-                return ((Service) o).getLastUpdated() > 0;
+            public boolean matches(Service argument) {
+                return ((Service) argument).getLastUpdated() > 0;
             }
         }));
     }
@@ -142,7 +150,7 @@ public class ServiceServiceTest {
 
         verify(serviceRepository).save(argThat(new ArgumentMatcher<Service>() {
             @Override
-            public boolean matches(Object o) {
+            public boolean matches(Service o) {
                 Service service = (Service) o;
                 return service.getDependedBy().contains(dashId);
             }
@@ -161,7 +169,7 @@ public class ServiceServiceTest {
 
         verify(serviceRepository).save(argThat(new ArgumentMatcher<Service>() {
             @Override
-            public boolean matches(Object o) {
+            public boolean matches(Service o) {
                 Service service = (Service) o;
                 return !service.getDependedBy().contains(dashId);
             }

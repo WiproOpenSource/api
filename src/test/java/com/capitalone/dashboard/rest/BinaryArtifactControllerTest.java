@@ -81,4 +81,12 @@ public class BinaryArtifactControllerTest {
         artifact.setArtifactVersion("1.1.0.0");
         return artifact;
     }
+    
+    private BinaryArtifactCreateRequest makeBadArtifactRequest() {
+        BinaryArtifactCreateRequest artifact = new BinaryArtifactCreateRequest();
+        artifact.setArtifactName("MyArtifact");
+        artifact.setArtifactGroup("Mygroup");
+        artifact.setArtifactVersion("1.1.0.0");
+        return artifact;
+    }
 }

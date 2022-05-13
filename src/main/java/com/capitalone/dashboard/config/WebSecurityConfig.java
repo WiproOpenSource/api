@@ -101,10 +101,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(standardLoginRequestFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(ssoAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(ssoAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(ldapLoginRequestFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(apiTokenRequestFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(openIdAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(openIdAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(githubWebhookRequestFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
@@ -180,13 +180,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    protected SsoAuthenticationFilter ssoAuthenticationFilter() throws Exception {
+    protected SsoAuthenticationFilter ssoAuthFilter() throws Exception {
         return new SsoAuthenticationFilter("/findUser", authenticationManager(), authenticationResultHandler);
     }
 
     @Bean
-    protected OpenIdAuthenticationFilter openIdAuthenticationFilter() throws Exception {
-        return new OpenIdAuthenticationFilter("/login/openid", authenticationManager(), authenticationResultHandler, restClient());
+    protected OpenIdAuthenticationFilter openIdAuthFilter() throws Exception {
+    	String path = "/login/openid";
+        return new OpenIdAuthenticationFilter(path, authenticationManager(), authenticationResultHandler, apiRestClient());
     }
 
     @Bean
@@ -212,7 +213,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public RestClient restClient() {
+    public RestClient apiRestClient() {
         return new RestClient(RestTemplate::new);
     }
 

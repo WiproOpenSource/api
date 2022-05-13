@@ -47,7 +47,7 @@ package com.capitalone.dashboard.fixture;
 	 }
 
  	public static Dashboard makeDashboard(String template, String title, String appName, String compName, String owner,
- 			DashboardType type, String configItemAppName, String configItemComponentName) {
+ 			DashboardType type, String configItemAppName, String configItemComponentName) { 
  		Application application = null;
  		if (type.equals(DashboardType.Team)) {
  			Component component = new Component();

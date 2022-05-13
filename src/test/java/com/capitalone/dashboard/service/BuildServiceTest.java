@@ -1,5 +1,32 @@
 package com.capitalone.dashboard.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.bson.types.ObjectId;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.joda.time.LocalDate;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
 import com.capitalone.dashboard.misc.HygieiaException;
 import com.capitalone.dashboard.model.Build;
 import com.capitalone.dashboard.model.BuildStatus;
@@ -26,32 +53,6 @@ import com.capitalone.dashboard.settings.ApiSettings;
 import com.capitalone.dashboard.webhook.settings.JenkinsBuildWebHookSettings;
 import com.capitalone.dashboard.webhook.settings.WebHookSettings;
 import com.querydsl.core.types.Predicate;
-import org.bson.types.ObjectId;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-import org.joda.time.LocalDate;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BuildServiceTest {
@@ -84,8 +85,9 @@ public class BuildServiceTest {
         when(collectorRepository.findById(collectorId).get()).thenReturn(new Collector());
 
         buildService.search(request);
-
-        verify(buildRepository, times(1)).findAll(argThat(hasPredicate("build.collectorItemId = " + collectorItemId.toString())));
+        ArgumentMatcher<Predicate> argMatcher = (ArgumentMatcher)hasPredicate("build.collectorItemId = " + collectorItemId.toString());
+        
+        verify(buildRepository, times(1)).findAll(argThat(argMatcher));
     }
 
     @Test
@@ -137,7 +139,10 @@ public class BuildServiceTest {
 
         long endTimeTarget = new LocalDate().minusDays(request.getNumberOfDays()).toDate().getTime();
         String expectedPredicate = "build.collectorItemId = " + collectorItemId.toString() + " && build.endTime >= " + endTimeTarget;
-        verify(buildRepository, times(1)).findAll(argThat(hasPredicate(expectedPredicate)));
+        ArgumentMatcher<Predicate> argMatcher = (ArgumentMatcher)hasPredicate(expectedPredicate);
+        //verify(buildRepository, times(1)).findAll(argThat(hasPredicate(expectedPredicate)));
+       
+        verify(buildRepository, times(1)).findAll(argThat(argMatcher));
     }
 
     @Test

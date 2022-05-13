@@ -1,7 +1,7 @@
 package com.capitalone.dashboard.config;
 
 //import com.github.fakemongo.Fongo;
-import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClient; 
 import org.springframework.context.annotation.Bean;
 
 public class FongoConfig extends MongoConfig {

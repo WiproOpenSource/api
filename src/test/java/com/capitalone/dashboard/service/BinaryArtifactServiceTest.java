@@ -21,7 +21,7 @@ import com.capitalone.dashboard.request.BinaryArtifactCreateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BinaryArtifactServiceTest {
+public class BinaryArtifactServiceTest { 
 	
 	@Mock 
 	BinaryArtifactRepository artifactRepository;

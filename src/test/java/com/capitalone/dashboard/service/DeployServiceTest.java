@@ -326,11 +326,21 @@ public class DeployServiceTest {
 
     @Test
     public void getDeployStatusSearchesAllPossibleCollectorNamesForMatches() {
-        List<Collector> colls = Arrays.asList(makeCollector(), makeCollector());
+    	ObjectId compId = ObjectId.get();
+    	List<Collector> colls = Arrays.asList(makeCollector(), makeCollector());
         ObjectId id1 = new ObjectId();
         colls.get(0).setId(id1);
         ObjectId id2 = new ObjectId();
         colls.get(1).setId(id2);
+        Component component = new Component();
+        CollectorItem item = new CollectorItem();
+        item.setId(ObjectId.get());
+        item.setCollectorId(ObjectId.get());
+        CollectorItem item2 = new CollectorItem();
+        item2.setId(ObjectId.get());
+        item2.setCollectorId(ObjectId.get());
+        component.getCollectorItems().put(CollectorType.Deployment, Arrays.asList(item, item2));
+        when(componentRepository.findById(compId).get()).thenReturn(component);
         when(collectorRepository.findByCollectorType(CollectorType.Deployment))
             .thenReturn(colls);
         when(collectorItemRepository.findByOptionsAndDeployedApplicationName(id1, "appName"))

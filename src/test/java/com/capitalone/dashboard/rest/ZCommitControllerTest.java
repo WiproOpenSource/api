@@ -72,7 +72,7 @@ public class ZCommitControllerTest {
 
     @Test
     public void  commits_noComponentId_badRequest() throws Exception {
-        mockMvc.perform(get("/commit")).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/commita")).andExpect(status().isBadRequest());
     }
 
     @Test

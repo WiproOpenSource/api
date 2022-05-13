@@ -32,7 +32,7 @@ public class TestUtil {
     public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
         ObjectMapper mapper = new CustomObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsBytes(object);
+        return mapper.writeValueAsBytes(object); 
     }
 
     public static void loadDashBoard(DashboardRepository dashboardRepository) throws IOException {
