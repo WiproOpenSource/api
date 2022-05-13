@@ -181,13 +181,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     protected SsoAuthenticationFilter ssoAuthFilter() throws Exception {
-        return new SsoAuthenticationFilter("/findUser", authenticationManager(), authenticationResultHandler);
+    	SsoAuthenticationFilter filter = new SsoAuthenticationFilter();
+        return filter.buildSsoAuthenticationFilter("/findUser", authenticationManager(), authenticationResultHandler);
     }
 
     @Bean
     protected OpenIdAuthenticationFilter openIdAuthFilter() throws Exception {
     	String path = "/login/openid";
-        return new OpenIdAuthenticationFilter(path, authenticationManager(), authenticationResultHandler, apiRestClient());
+    	OpenIdAuthenticationFilter filter = new OpenIdAuthenticationFilter(path);
+        return filter.buildOpenIdAuthenticationFilter(path, authenticationManager(), authenticationResultHandler, apiRestClient());
     }
 
     @Bean
