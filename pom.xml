@@ -69,7 +69,7 @@
 
     <properties>
         <!-- Dependencies -->
-        <jar.variable>/Users/erictice/git/hygieia-core2/target/core-4.0.0-embed.jar</jar.variable>
+        <jar.variable>/Users/erictice/.m2/repository/com/capitalone/dashboard/core/4.0.0/core-4.0.0-embed.jar</jar.variable>
         <com.capitalone.dashboard.core.version>4.0.0</com.capitalone.dashboard.core.version>
         <spring-security.version>5.5.4</spring-security.version>  
         <springweb.version>5.3.19</springweb.version>
@@ -142,8 +142,7 @@
             <groupId>com.capitalone.dashboard</groupId>
             <artifactId>core</artifactId>
             <version>${com.capitalone.dashboard.core.version}</version>
-         <!--   <scope>system</scope>
-            <systemPath>${jar.variable}</systemPath>-->  
+            <classifier>embed</classifier>
         </dependency>
 
         <!-- Spring Libraries -->
@@ -341,19 +340,35 @@
         <finalName>api</finalName>
         
         <plugins>
+	        <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-jar-plugin</artifactId>
+		        <version>3.2.2</version>
+		        <executions>
+		            <execution>
+		                <goals>
+		                    <goal>jar</goal>
+		                </goals>
+		                <phase>package</phase>
+		                <configuration>
+		                    <!--to be imported on other projects-->
+		                    <classifier>embed</classifier>
+		                </configuration>
+		            </execution>
+		        </executions>
+		    </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId> 
                 <version>2.6.7</version>
                   <executions>
                     <execution>
-                        <id>repackage</id>
                         <goals>
               				<goal>repackage</goal>
             			</goals>
                         <configuration>
                         	<classifier>exec</classifier>
-                            <mainClass>com.capitalone.dashboard.Application</mainClass>
+                        	<mainClass>com.capitalone.dashboard.Application</mainClass>
                         </configuration>
                     </execution>
                 </executions> 
